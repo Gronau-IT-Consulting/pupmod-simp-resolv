@@ -85,12 +85,14 @@ class resolv (
     }
   }
 
-  # We're managing resolv.conf, so ignore what dhcp says.
-  simp_file_line { 'resolv_peerdns':
-    path       => '/etc/sysconfig/network',
-    line       => 'PEERDNS=no',
-    match      => '^\s*PEERDNS=',
-    deconflict => true
+  if $facts['os']['name'] in ['RedHat','CentOS'] {
+    # We're managing resolv.conf, so ignore what dhcp says.
+    simp_file_line { 'resolv_peerdns':
+      path       => '/etc/sysconfig/network',
+      line       => 'PEERDNS=no',
+      match      => '^\s*PEERDNS=',
+      deconflict => true
+    }
   }
 
   if defined_with_params(Class['named'], {'chroot' => false}) {
